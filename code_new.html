@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowly AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+        }
+
+        .dark-mode .theme-toggle {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .logo-container {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ddd;
+        }
+
+        .dark-mode .logo {
+            border-color: #444;
+        }
+
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .professor-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-professor {
+            position: absolute;
+            width: 150px;
+            height: 225px;
+            animation: professorFloat 20s linear infinite;
+            opacity: 0.3;
+        }
+
+        .dark-mode .floating-professor {
+            filter: brightness(0.8);
+        }
+
+        @keyframes professorFloat {
+            0% { transform: translate(-150px, 100vh) rotate(-10deg); }
+            50% { transform: translate(50vw, 50vh) rotate(10deg); }
+            100% { transform: translate(100vw, 0) rotate(-10deg); }
+        }
+
+        .floating-professor:nth-child(2) {
+            animation-delay: -5s;
+            animation-duration: 25s;
+        }
+
+        .floating-professor:nth-child(3) {
+            animation-delay: -10s;
+            animation-duration: 22s;
+        }
+
+        .equation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .equation {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(0, 0, 0, 0.1);
+            animation: floatUpDiagonal 15s linear infinite;
+        }
+
+        .dark-mode .equation {
+            color: rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes floatUpDiagonal {
+            0% { transform: translate(0, 100vh) rotate(-15deg); }
+            100% { transform: translate(100vw, -100vh) rotate(-15deg); }
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            background-color: #f5f5f5;
+            margin-top: 0.5rem;
+        }
+
+        .dark-mode input, .dark-mode select {
+            background-color: #333;
+            border-color: #444;
+            color: white;
+        }
+
+        button {
+            padding: 12px 24px;
+            border-radius: 25px;
+            border: none;
+            background-color: #4a90e2;
+            color: white;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        .progress-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(#4a90e2 0% 24%, #ddd 24% 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .progress-circle::before {
+            content: "24%";
+            position: relative;
+            z-index: 1;
+        }
+
+        .dark-mode .progress-circle {
+            background: conic-gradient(#4a90e2 0% 24%, #333 24% 100%);
+        }
+
+        footer {
+            position: absolute;
+            bottom: 1rem;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo Container -->
+    <div class="logo-container">
+        <img src="C:/Users/samit/Downloads/knowly/1737553051019.jpg" alt="Knowly Logo" class="logo">
+    </div>
+
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+
+    <div class="professor-container">
+        <svg class="floating-professor" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
+            <g class="professor">
+                <circle cx="100" cy="60" r="30" fill="#FFD700"/>
+                <circle cx="85" cy="50" r="5" fill="black"/>
+                <circle cx="115" cy="50" r="5" fill="black"/>
+                <path d="M90 70 Q100 80 110 70" fill="none" stroke="black" stroke-width="3"/>
+                <path d="M70 40 Q100 20 130 40" fill="none" stroke="#8B4513" stroke-width="8"/>
+                <circle cx="85" cy="50" r="8" fill="none" stroke="black" stroke-width="2"/>
+                <circle cx="115" cy="50" r="8" fill="none" stroke="black" stroke-width="2"/>
+                <line x1="93" y1="50" x2="107" y2="50" stroke="black" stroke-width="2"/>
+                <rect x="75" y="90" width="50" height="60" fill="#4169E1"/>
+                <rect x="55" y="90" width="20" height="40" fill="#4169E1" transform="rotate(-20 55 90)"/>
+                <rect x="125" y="90" width="20" height="40" fill="#4169E1" transform="rotate(20 145 90)"/>
+                <rect x="85" y="150" width="15" height="40" fill="#000080"/>
+                <rect x="100" y="150" width="15" height="40" fill="#000080"/>
+                <rect x="135" y="80" width="30" height="25" fill="#8B4513" transform="rotate(20 145 90)"/>
+            </g>
+        </svg>
+        <svg class="floating-professor" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
+            <use href="#professor"/>
+        </svg>
+        <svg class="floating-professor" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
+            <use href="#professor"/>
+        </svg>
+    </div>
+
+    <div class="equation-container"></div>
+
+    <div id="login-page" class="page active">
+        <h1>Knowly AI</h1>
+        <p>Your Knowledge Buddy</p>
+        <div style="margin: 2rem 0;">
+            <button onclick="showPage('signup-page')">Sign Up</button>
+            <button onclick="showPage('selection-page')">Login</button>
+        </div>
+    </div>
+
+    <div id="signup-page" class="page">
+        <h1>Create an Account</h1>
+        <div class="input-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter your username">
+        </div>
+        <div class="input-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter your password">
+        </div>
+        <div>
+            <button onclick="showPage('login-page')">Back</button>
+            <button onclick="showPage('selection-page')">Continue</button>
+        </div>
+    </div>
+
+    <div id="selection-page" class="page">
+        <div class="input-group">
+            <label for="department">Select Your Department in DTU</label>
+            <select id="department" onchange="updateSubjects()">
+                <option value="applied-chemistry">Applied Chemistry</option>
+                <option value="architectural-engineering">Architectural Engineering</option>
+                <option value="autonomous-systems">Autonomous Systems</option>
+                <option value="bioinformatics">Bioinformatics</option>
+                <!-- Add other departments -->
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="subject">Select Your Subject</label>
+            <select id="subject">
+                <option value="">Please select a department first</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="lesson">Select Lesson</label>
+            <select id="lesson">
+                <option value="lesson1">Lesson 1</option>
+                <option value="lesson2">Lesson 2</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="learning-style">Select Your Preferred Learning Style</label>
+            <select id="learning-style">
+                <option value="text">Text-Based</option>
+                <option value="images">Image-Based</option>
+            </select>
+        </div>
+        <div>
+            <button onclick="showPage('login-page')">Back</button>
+            <button onclick="showPage('learning-page')">Start Lesson</button>
+        </div>
+    </div>
+
+    <div id="learning-page" class="page">
+        <h1 id="course-title">Course Name</h1>
+        <div class="progress-circle"></div>
+        <p>Course Progress</p>
+        <div class="input-group">
+            <label>Query</label>
+            <div style="padding: 1rem; background: #f5f5f5; border-radius: 10px; margin-top: 0.5rem;">
+                Query content goes here
+            </div>
+        </div>
+        <div class="input-group">
+            <label>Problem Statement</label>
+            <div style="padding: 1rem; background: #f5f5f5; border-radius: 10px; margin-top: 0.5rem; min-height: 100px;">
+                Problem statement goes here
+            </div>
+        </div>
+        <div class="input-group">
+            <input type="text" placeholder="Your Answer">
+        </div>
+        <div>
+            <button onclick="showPage('selection-page')">Back</button>
+            <button>Submit</button>
+        </div>
+    </div>
+
+    <footer>
+        AI rights reserved 2025 Knowly AI
+    </footer>
+
+    <script>
+        let selectedCourse = ''; // Global variable to store the selected course name
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Update the course name dynamically on the learning page
+            if (pageId === 'learning-page') {
+                const courseNameElement = document.querySelector('#course-title');
+                courseNameElement.textContent = selectedCourse || 'Course Name'; // Default if no course selected
+            }
+
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function updateSubjects() {
+            const department = document.getElementById('department').value;
+            const subjectSelect = document.getElementById('subject');
+            
+            subjectSelect.innerHTML = '';
+            
+            const subjects = {
+                'applied-chemistry': [
+                    'Chemistry and Innovation',
+                    'Chemical and Biochemical Product Design',
+                    'Biobusiness and Process Innovation',
+                    'Physical Chemistry 3',
+					'Chemistry and Innovation',
+					'Biomolecular Chemistry',
+					'Applied Colloid and Surface Chemistry',
+					'Solid state and structural chemistry',
+					'Advanced Inorganic Chemistry (Inorganic Chemistry 3)',
+					'Introduction to Machine Learning and Data Mining',
+					'Protein structure and computational biology',
+					'Immune System in Health and Disease',
+					'Practical NMR spectroscopy: Making reactions in (bio)chemistry visible'
+                ],
+                'architectural-engineering': [
+                    'Life Cycle Assessment of Products and Systems',
+                    'Advanced life cycle assessment methods',
+                    'Life cycle impact assessment modelling in the context of planetary boundaries	',
+                    'Energy and Sustainability',
+					'Development and operation of product/service-systems',
+					'Design for Circular Economy',
+					'X-Tech Entrepreneurship',
+					'Introduction to Artificial Intelligence',
+					'Advanced life cycle assessment methods',
+					'Computational Fluid Dynamics for Buildings',
+					'Advanced Building Information Modeling (BIM)'
+                ]
+            };
+
+            if (subjects[department]) {
+                subjects[department].forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject.toLowerCase().replace(/\s+/g, '-');
+                    option.textContent = subject;
+                    subjectSelect.appendChild(option);
+                });
+
+                // Listen for subject selection to update selectedCourse
+                subjectSelect.addEventListener('change', () => {
+                    selectedCourse = subjectSelect.options[subjectSelect.selectedIndex].text;
+                });
+            } else {
+                const option = document.createElement('option');
+                option.value = "";
+                option.textContent = "Please select a valid department";
+                subjectSelect.appendChild(option);
+            }
+        }
+
+        function addFloatingEquations() {
+            const equations = [
+                'E = mc²',
+                'F = ma',
+                'PV = nRT',
+                'a² + b² = c²',
+                '∮ E·dl = -dΦ/dt'
+            ];
+            
+            const container = document.querySelector('.equation-container');
+            
+            setInterval(() => {
+                const equation = document.createElement('div');
+                equation.className = 'equation';
+                equation.textContent = equations[Math.floor(Math.random() * equations.length)];
+                equation.style.left = Math.random() * 100 + 'vw';
+                container.appendChild(equation);
+                
+                setTimeout(() => {
+                    equation.remove();
+                }, 15000);
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('login-page');
+            addFloatingEquations();
+            document.getElementById('department').addEventListener('change', updateSubjects);
+            updateSubjects();
+        });
+    </script>
+</body>
+</html>
